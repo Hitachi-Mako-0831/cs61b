@@ -1,38 +1,16 @@
 public class ArrayDeque<T> {
     private T[] array;
     private int size;
-    private double percentage = 0.25;
-    private int addFirstTime;
+    private int length;
+    private int front;
+    private int last;
 
     public ArrayDeque() {
         array = (T[]) new Object[8];
         size = 0;
-        addFirstTime = 0;
-    }
-
-    private void resize(int newSize) {
-        T[] newArray = (T[]) new Object[newSize];
-        System.arraycopy(array, array.length - addFirstTime - 1, newArray, 0, addFirstTime);
-        System.arraycopy(array, 0, newArray, addFirstTime, size - addFirstTime);
-        array = newArray;
-        addFirstTime = 0;
-    }
-
-    public void addFirst(T item) {
-        if (size == array.length) {
-            resize(array.length + 1);
-        }
-        array[array.length - addFirstTime - 1] = item;
-        size++;
-        addFirstTime++;
-    }
-
-    public void addLast(T item) {
-        if (size == array.length) {
-            resize(array.length + 1);
-        }
-        array[size - addFirstTime] = item;
-        size++;
+        length = 8;
+        front = 4;
+        last = 4;
     }
 
     public boolean isEmpty() {
@@ -43,52 +21,110 @@ public class ArrayDeque<T> {
         return size;
     }
 
-    public void printDeque() {
-        for (int i = 0; i < addFirstTime; i++) {
-            System.out.print(array[array.length - addFirstTime + i] + " ");
+    private int minusOne(int index) {
+        if (index == 0) {
+            return length - 1;
         }
-        for (int j = 0; j < size - addFirstTime; j++) {
-            System.out.print(array[j] + " ");
+        return index - 1;
+    }
+
+    private int plusOne(int index, int module) {
+        index %= module;
+        if (index == module - 1) {
+            return 0;
         }
-        System.out.println();
+        return index + 1;
+    }
+
+    private void grow() {
+        T[] newArray = (T[]) new Object[length * 2];
+        int ptr1 = front;
+        int ptr2 = length;
+        while (ptr1 != last) {
+            newArray[ptr2] = array[ptr1];
+            ptr1 = plusOne(ptr1, length);
+            ptr2 = plusOne(ptr2, length * 2);
+        }
+        front = length;
+        last = ptr2;
+        array = newArray;
+        length *= 2;
+    }
+
+    private void shrink() {
+        T[] newArray = (T[]) new Object[length / 2];
+        int ptr1 = front;
+        int ptr2 = length / 4;
+        while (ptr1 != last) {
+            newArray[ptr2] = array[ptr1];
+            ptr1 = plusOne(ptr1, length);
+            ptr2 = plusOne(ptr2, length / 2);
+        }
+        front = length / 4;
+        last = ptr2;
+        array = newArray;
+        length /= 2;
+    }
+
+    public void addFirst(T item) {
+        if (size == length - 1) {
+            grow();
+        }
+        front = minusOne(front);
+        array[front] = item;
+        size++;
+    }
+
+    public void addLast(T item) {
+        if (size == length - 1) {
+            grow();
+        }
+        array[last] = item;
+        last = plusOne(last, length);
+        size++;
     }
 
     public T removeFirst() {
+        if (length >= 16 && length / size >= 4) {
+            shrink();
+        }
         if (size == 0) {
             return null;
-        } else {
-            T item = array[array.length - addFirstTime - 1];
-            array[array.length - addFirstTime - 1] = null;
-            size--;
-            addFirstTime--;
-            if (array.length >= 16 && (double) size / array.length < percentage) {
-                resize(array.length -1);
-            }
-            return item;
         }
+        T ret = array[front];
+        front = plusOne(front, length);
+        size--;
+        return ret;
     }
 
     public T removeLast() {
+        if (length >= 16 && length / size >= 4) {
+            shrink();
+        }
         if (size == 0) {
             return null;
-        } else {
-            T item = array[size - addFirstTime - 1];
-            array[size - addFirstTime - 1] = null;
-            size--;
-            if (array.length >= 16 && (double) size / array.length > percentage) {
-                resize(array.length -1);
-            }
-            return item;
         }
+        last = minusOne(last);
+        size--;
+        return array[last];
     }
 
     public T get(int index) {
-        if (index < 0 || index >= size) {
+        if (index >= size) {
             return null;
-        } else if (index < addFirstTime) {
-            return array[array.length - addFirstTime - 1 + index];
-        } else {
-            return array[index - addFirstTime];
+        }
+        int ptr = front;
+        for (int i = 0; i < index; i++) {
+            ptr = plusOne(ptr, length);
+        }
+        return array[ptr];
+    }
+
+    public void printDeque() {
+        int ptr = front;
+        while (ptr != last) {
+            System.out.print(array[ptr] + " ");
+            ptr = plusOne(ptr, length);
         }
     }
 }
