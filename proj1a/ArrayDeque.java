@@ -56,8 +56,9 @@ public class ArrayDeque<T> {
     public T removeFirst() {
         if (size == 0) {
             return null;
-        }else {
+        } else {
             T item = array[array.length - addFirstTime - 1];
+            array[array.length - addFirstTime - 1] = null;
             size--;
             addFirstTime--;
             if (array.length >= 16 && (double) size / array.length < percentage) {
@@ -70,8 +71,9 @@ public class ArrayDeque<T> {
     public T removeLast() {
         if (size == 0) {
             return null;
-        }else {
+        } else {
             T item = array[size - addFirstTime - 1];
+            array[size - addFirstTime - 1] = null;
             size--;
             if (array.length >= 16 && (double) size / array.length > percentage) {
                 resize(array.length / 2);
@@ -86,5 +88,4 @@ public class ArrayDeque<T> {
         }
         return (index < addFirstTime) ? array[array.length - addFirstTime - 1 + index] : array[index - addFirstTime];
     }
-
 }

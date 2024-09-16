@@ -19,21 +19,21 @@ public class LinkedListDeque<T> {
     private int size;
 
     public LinkedListDeque() {
-        sentinel = new Node(null,null);
+        sentinel = new Node(null, null);
         sentinel.next = sentinel;
         sentinel.prev = sentinel;
         size = 0;
     }
 
     public void addFirst(T item) {
-        Node first= new Node(item, sentinel, sentinel.next);
+        Node first = new Node(item, sentinel, sentinel.next);
         sentinel.next.prev = first;
         sentinel.next = first;
         size += 1;
     }
 
     public void addLast(T item) {
-        Node last= new Node(item, sentinel.prev, sentinel);
+        Node last = new Node(item, sentinel.prev, sentinel);
         sentinel.prev.next = last;
         sentinel.prev = last;
         size += 1;
@@ -61,6 +61,7 @@ public class LinkedListDeque<T> {
             return null;
         }
         T result = sentinel.next.item;
+        sentinel.next.next.prev = sentinel;
         sentinel.next = sentinel.next.next;
         size -= 1;
         return result;
@@ -71,13 +72,14 @@ public class LinkedListDeque<T> {
             return null;
         }
         T result = sentinel.prev.item;
+        sentinel.prev.prev.next = sentinel;
         sentinel.prev = sentinel.prev.prev;
         size -= 1;
         return result;
     }
 
-    public T get (int index) {
-        if (index < 0 ||index >= size) {
+    public T get(int index) {
+        if (index < 0 || index >= size) {
             return null;
         }
         Node current = sentinel;
@@ -91,13 +93,13 @@ public class LinkedListDeque<T> {
     private T getRecursiveHelper(Node current, int index) {
         if (index == 0) {
             return current.item;
-        }else {
+        } else {
             return getRecursiveHelper(current.next, index - 1);
         }
     }
 
     public T getRecursive(int index) {
-        if (index < 0 ||index >= size) {
+        if (index < 0 || index >= size) {
             return null;
         }
         return getRecursiveHelper(sentinel.next, index);
