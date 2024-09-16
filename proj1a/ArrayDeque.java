@@ -20,7 +20,7 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         if (size == array.length) {
-            resize(array.length * 2);
+            resize(array.length + 1);
         }
         array[array.length - addFirstTime - 1] = item;
         size++;
@@ -29,7 +29,7 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         if (size == array.length) {
-            resize(array.length * 2);
+            resize(array.length + 1);
         }
         array[size - addFirstTime] = item;
         size++;
@@ -62,7 +62,7 @@ public class ArrayDeque<T> {
             size--;
             addFirstTime--;
             if (array.length >= 16 && (double) size / array.length < percentage) {
-                resize(array.length / 2);
+                resize(array.length -1);
             }
             return item;
         }
@@ -76,7 +76,7 @@ public class ArrayDeque<T> {
             array[size - addFirstTime - 1] = null;
             size--;
             if (array.length >= 16 && (double) size / array.length > percentage) {
-                resize(array.length / 2);
+                resize(array.length -1);
             }
             return item;
         }
@@ -85,7 +85,10 @@ public class ArrayDeque<T> {
     public T get(int index) {
         if (index < 0 || index >= size) {
             return null;
+        } else if (index < addFirstTime) {
+            return array[array.length - addFirstTime - 1 + index];
+        } else {
+            return array[index - addFirstTime];
         }
-        return (index < addFirstTime) ? array[array.length - addFirstTime - 1 + index] : array[index - addFirstTime];
     }
 }
