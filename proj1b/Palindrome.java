@@ -12,12 +12,12 @@ public class Palindrome {
     }
 
     private boolean isPalindromeHelper(Deque<Character> wordDeque) {
-        if (wordDeque.size() == 1 ||wordDeque.isEmpty()) {
+        if (wordDeque.size() == 1 || wordDeque.isEmpty()) {
             return true;
         }
-        Character Last = wordDeque.removeLast();
-        Character First = wordDeque.removeFirst();
-        return Last == First && isPalindromeHelper(wordDeque);
+        Character last = wordDeque.removeLast();
+        Character first = wordDeque.removeFirst();
+        return last == first && isPalindromeHelper(wordDeque);
     }
 
     public boolean isPalindrome(String word, CharacterComparator cc) {
@@ -25,11 +25,11 @@ public class Palindrome {
     }
 
     private boolean isPalindromeCCHelper(Deque<Character> wordDeque, CharacterComparator cc) {
-        if (wordDeque.size() == 1 ||wordDeque.isEmpty()) {
+        if (wordDeque.size() == 1 || wordDeque.isEmpty()) {
             return true;
         }
-        Character Last = wordDeque.removeLast();
-        Character First = wordDeque.removeFirst();
-        return cc.equalChars(Last, First) && isPalindromeCCHelper(wordDeque, cc);
+        Character last = wordDeque.removeLast();
+        Character first = wordDeque.removeFirst();
+        return cc.equalChars(last, first) && isPalindromeCCHelper(wordDeque, cc);
     }
 }
